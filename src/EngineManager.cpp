@@ -20,6 +20,8 @@ bool EngineManager::Startup() {
   if ((surface = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, BITS_PER_PIXEL, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT)) == NULL)
     return false;
 
+  SDL_WM_SetCaption("Babble - The new high rise", "Babble");
+
   while (running) {
     SDL_Event sdlEvent;
 

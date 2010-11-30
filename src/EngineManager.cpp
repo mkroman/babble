@@ -54,11 +54,11 @@ bool EngineManager::Startup() {
 }
 
 void EngineManager::AddBaseObject(BaseObject* object) {
-  baseObjects.push_back(object);
+  addedBaseObjects.push_back(object);
 }
 
 void EngineManager::RemoveBaseObject(BaseObject* object) {
-  baseObjects.remove(object);
+  removedBaseObjects.remove(object);
 }
 
 void EngineManager::AddBaseObjects() {

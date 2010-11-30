@@ -1,6 +1,8 @@
 #include <iostream>
+#include <boost/foreach.hpp>
 
 #include "EngineManager.h"
+#include "BaseObject.h"
 #include "Constants.h"
 
 EngineManager::EngineManager() : running(true), surface(NULL) {
@@ -12,8 +14,6 @@ EngineManager::~EngineManager() {
 }
 
 bool EngineManager::Startup() {
-  int x = 0, y = 0, dx = 1, dy = 1;
-
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     return false;
 
@@ -30,32 +30,45 @@ bool EngineManager::Startup() {
       }
     }
 
+    AddBaseObjects();
+    RemoveBaseObjects();
+
+    BOOST_FOREACH (BaseObject* object, baseObjects)
+      object->EnterFrame(100.0f);
+
     SDL_Rect clearRect;
     clearRect.x = 0;
     clearRect.y = 0;
     clearRect.h = SCREEN_HEIGHT;
     clearRect.w = SCREEN_WIDTH;
 
-    SDL_Rect testRect;
-
-    testRect.x = x;
-    testRect.y = y;
-    testRect.w = 500;
-    testRect.h = 300;
-
-    if (x > SCREEN_WIDTH - testRect.w || x < 0)
-      dx = -dx;
-    if (y > SCREEN_HEIGHT - testRect.h || y < 0)
-      dy = -dy;
-
-    x += dx;
-    y += dy;
-
     SDL_FillRect(surface, &clearRect, 0);
-    SDL_FillRect(surface, &testRect, 666666);
+
+    BOOST_FOREACH (BaseObject* object, baseObjects)
+      object->Draw(surface);
 
     SDL_Flip(surface);
   }
 
   return true;
+}
+
+void EngineManager::AddBaseObject(BaseObject* object) {
+  baseObjects.push_back(object);
+}
+
+void EngineManager::RemoveBaseObject(BaseObject* object) {
+  baseObjects.remove(object);
+}
+
+void EngineManager::AddBaseObjects() {
+  BOOST_FOREACH (BaseObject* object, addedBaseObjects)
+    baseObjects.push_back(object);
+  addedBaseObjects.clear();
+}
+
+void EngineManager::RemoveBaseObjects() {
+  BOOST_FOREACH (BaseObject* object, removedBaseObjects)
+    baseObjects.remove(object);
+  removedBaseObjects.clear();
 }
